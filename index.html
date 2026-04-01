@@ -69,6 +69,35 @@
             margin-top: 50px;
         }
 
+        /* CLOSE BUTTON */
+        .close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 40px;
+            color: white;
+            cursor: pointer;
+        }
+
+        /* NEXT / PREV BUTTONS */
+        .prev, .next {
+            position: absolute;
+            top: 50%;
+            font-size: 40px;
+            color: white;
+            padding: 10px;
+            cursor: pointer;
+            user-select: none;
+            transform: translateY(-50%);
+        }
+
+        .prev { left: 20px; }
+        .next { right: 20px; }
+
+        .prev:hover, .next:hover {
+            color: #ccc;
+        }
+
         /* FORM */
         form input, form textarea {
             display: block;
@@ -99,7 +128,7 @@
 <!-- HOME -->
 <section id="home">
     <h1>Welcome to My Website</h1>
-    <p>This is my one-page website which uses images, video, and a contact form.The images pop open in Lightbox format .</p>
+    <p>This is my one-page website which uses images, video, and a contact form. The images now work in a slideshow lightbox.</p>
 </section>
 
 <!-- GALLERY -->
@@ -107,16 +136,20 @@
     <h2>Image Gallery</h2>
 
     <div class="gallery">
-        <img src="Images/plant1-small.jpg" onclick="openModal('Images/plant1.jpg')" class="gallery-img">
-        <img src="Images/plant2-small.jpg" onclick="openModal('Images/plant2.jpg')" class="gallery-img">
-        <img src="Images/plant3-small.jpg" onclick="openModal('Images/plant3.jpg')" class="gallery-img">
-        <img src="Images/plant4-small.jpg" onclick="openModal('Images/plant4.jpg')" class="gallery-img">
+        <img src="Images/plant1-small.jpg" onclick="openLightbox(0)" class="gallery-img">
+        <img src="Images/plant2-small.jpg" onclick="openLightbox(1)" class="gallery-img">
+        <img src="Images/plant3-small.jpg" onclick="openLightbox(2)" class="gallery-img">
+        <img src="Images/plant4-small.jpg" onclick="openLightbox(3)" class="gallery-img">
     </div>
 </section>
 
 <!-- LIGHTBOX -->
-<div id="lightbox" class="lightbox" onclick="closeModal()">
+<div id="lightbox" class="lightbox">
+    <span class="close" onclick="closeLightbox()">&times;</span>
+
+    <span class="prev" onclick="changeSlide(-1)">❮</span>
     <img id="lightbox-img">
+    <span class="next" onclick="changeSlide(1)">❯</span>
 </div>
 
 <!-- VIDEO -->
@@ -124,7 +157,7 @@
     <h2>My Video</h2>
 
     <iframe width="560" height="315"
-        src="https://www.youtube.com/watch?v=4uTv7ZTpnvc"
+        src="https://www.youtube.com/embed/4uTv7ZTpnvc"
         frameborder="0" allowfullscreen>
     </iframe>
 </section>
@@ -146,8 +179,47 @@
     <p>© 2026 My One Page Website</p>
 </footer>
 
-<!-- JS LINK -->
-<script src="JS/one_page_website.js"></script>
+<!-- EMBEDDED JS -->
+<script>
+    let currentIndex = 0;
+
+    const images = [
+        "Images/plant1.jpg",
+        "Images/plant2.jpg",
+        "Images/plant3.jpg",
+        "Images/plant4.jpg"
+    ];
+
+    function openLightbox(index) {
+        currentIndex = index;
+        document.getElementById("lightbox").style.display = "block";
+        showImage();
+    }
+
+    function closeLightbox() {
+        document.getElementById("lightbox").style.display = "none";
+    }
+
+    function showImage() {
+        document.getElementById("lightbox-img").src = images[currentIndex];
+    }
+
+    function changeSlide(step) {
+        currentIndex = (currentIndex + step + images.length) % images.length;
+        showImage();
+    }
+
+    // KEYBOARD SUPPORT (BONUS)
+    document.addEventListener("keydown", function(e) {
+        const lightbox = document.getElementById("lightbox");
+
+        if (lightbox.style.display === "block") {
+            if (e.key === "ArrowRight") changeSlide(1);
+            if (e.key === "ArrowLeft") changeSlide(-1);
+            if (e.key === "Escape") closeLightbox();
+        }
+    });
+</script>
 
 </body>
 </html>
